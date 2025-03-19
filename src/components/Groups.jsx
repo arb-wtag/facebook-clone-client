@@ -37,6 +37,7 @@ export default function Groups() {
     const fetchGroupPosts = async (groupId) => {
       try {
         const res = await axios.get(`http://localhost:5000/api/groups/${groupId}/posts`, { withCredentials: true });
+        //console.log(res.data);
         setGroupPosts(res.data);
       } catch (error) {
       toast.error("Failed to load group posts");
@@ -211,7 +212,7 @@ export default function Groups() {
                 <p className="text-gray-600">{group.description}</p>
                 <div className="mt-4 flex gap-2">
                   <button onClick={() => handleSelectGroup(group)} className="btn btn-info">View Posts</button>
-                  <button onClick={() => fetchGroupPosts(group.id)} className="btn btn-primary">Refresh</button>
+                  {/* <button onClick={() => fetchGroupPosts(group.id)} className="btn btn-primary">Refresh</button> */}
                   <button onClick={() => handleLeaveGroup(group.id)} className="btn btn-primary">Leave</button>
                 </div>
               </div>
@@ -238,6 +239,7 @@ export default function Groups() {
                 <div key={post.id} className="card bg-base-100 shadow-md p-4">
                   <p className="text-gray-800">{post.content}</p>
                   <p className="text-sm text-gray-500">By {post.username} | {new Date(post.created_at).toLocaleString()}</p>
+                  {/* {console.log(user,selectedGroup)} */}
                   {(post.user_id === user.id || user.id === selectedGroup.admin_id) && (
                     <button onClick={() => handleDeletePost(post.id)} className="btn btn-error mt-2">Delete</button>
                   )}
@@ -263,7 +265,7 @@ export default function Groups() {
                             <li key={member.id} className="flex justify-between items-center p-3 bg-gray-100 rounded-md">
                                 <div className="flex items-center gap-3">
                                     <img
-                                        src={member.photo || "https://via.placeholder.com/40"}
+                                        src={member.photo}
                                         alt={member.username}
                                         className="w-10 h-10 rounded-full"
                                     />
@@ -273,7 +275,7 @@ export default function Groups() {
                                     </div>
                                 </div>
 
-                                {/* Role Change Dropdown (Visible only if admin) */}
+                                
                                 {selectedGroup.admin_id === member.id ? (
                                     <span className="text-green-600 font-semibold">Admin</span>
                                 ) : (

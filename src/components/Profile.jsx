@@ -312,6 +312,18 @@ export default function Profile() {
                                 />
                                 <button onClick={()=>handleComment(post.id)} className="bg-blue-500 text-white px-3 py-1 mt-2 rounded">Comment</button>
                             </div>
+                            <ul className="space-y-2">
+              {comments[post.id]?.length > 0 ? (
+                comments[post.id].map((comment) => (
+                  <li key={comment.id} className="p-2 bg-white border rounded">
+                    <span className="font-semibold">{comment.username}: </span>
+                    {comment.content}
+                  </li>
+                ))
+              ) : (
+                <p className="text-gray-500">No comments yet.</p>
+              )}
+            </ul>
                         </div>
                     ))
                 )}

@@ -8,6 +8,9 @@ import Login from "./Login";
 import Register from "./Register";
 import Groups from "./Groups";
 import Profile from "./Profile";
+import Inbox from "./Inbox";
+import Friend from "./Friend";
+import Home from "./Home";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +33,18 @@ const router = createBrowserRouter([
         {
           path: '/profile',
           element: <Profile></Profile>
+        },
+        {
+          path: '/inbox',
+          element: <Inbox></Inbox>
+        },
+        {
+          path: '/friend',
+          element: <Friend></Friend>
+        },
+        {
+          path: '/',
+          element: <Home></Home>
         }
       ]
     },

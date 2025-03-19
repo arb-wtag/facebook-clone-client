@@ -27,6 +27,7 @@ export default function Header() {
             <Link to="/" className="btn btn-ghost">Home</Link>
             <Link to="/inbox" className="btn btn-ghost">Inbox</Link>
             <Link to="/groups" className="btn btn-ghost">Groups</Link>
+            <Link to="/friend" className="btn btn-ghost">Friend</Link>
             <Link to="/profile" className="btn btn-ghost">Profile</Link>
 
             <button onClick={handleLogout} className="btn btn-error">Logout</button>
