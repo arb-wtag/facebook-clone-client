@@ -125,6 +125,7 @@ export default function Inbox() {
                 </ul>
 
                 <ul className="mt-4">
+                    {console.log(conversations)}
                     {conversations.map((chat) => (
                         <li key={chat.id} onClick={() => fetchMessages(chat.id)} className="cursor-pointer p-2 hover:bg-gray-200 rounded">
                             <img src={chat.photo} alt="Profile" className="w-8 h-8 rounded-full inline-block mr-2" />
@@ -138,11 +139,20 @@ export default function Inbox() {
                 {selectedChat ? (
                     <>
                         <div className="border p-4 h-96 overflow-y-auto">
-                            {messages.map((msg) => (
+                            {/* {console.log(messages)} */}
+                            {messages.map((msg) =>{
+                                let sender = conversations.find(c => c.id === msg.sender_id);
+                                console.log(sender);
+                                if(!sender)
+                                {
+                                    sender=user;
+                                }
+                            return (
                                 <div key={msg.id} className={`p-2 my-1 rounded ${msg.sender_id === user.id ? "bg-blue-200" : "bg-gray-200"}`}>
-                                    {msg.content}
+                                    <strong className={`${msg.sender_id === user.id ? "text-red-500" : "text-blue-500"}`}>{sender?.username} : </strong>{msg.content}
                                 </div>
-                            ))}
+                            );
+                            })}
                         </div>
                         <div className="mt-2 flex">
                             <input

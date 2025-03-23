@@ -281,7 +281,7 @@ export default function Profile() {
                             }
                             <p className="text-gray-800">{post.content}</p>
                             {post.image && (
-                                <img src={`http://localhost:5000${post.image}`} alt="Post" className="w-full object-cover rounded-md mt-2" />
+                                <img src={`${post.image}`} alt="Post" className="w-full object-cover rounded-md mt-2" />
                             )}
                             <div className="flex justify-between mt-3">
                                 {/* <button onClick={()=>handleLike(post.id)} className="text-blue-500">👍 {likes[post.id] || 0} Likes</button> */}

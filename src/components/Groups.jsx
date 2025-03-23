@@ -14,6 +14,9 @@ export default function Groups() {
     const [description,setDescription]=useState("");
     const [groupMembers, setGroupMembers] = useState([]);
     const [loading,setLoading]=useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [invitations, setInvitations] = useState([]);
 
     const fetchGroups=async ()=>{
         try{
@@ -163,6 +166,49 @@ export default function Groups() {
         }
     };
 
+    const handleSearch = async () => {
+      if (!searchTerm) return;
+      try {
+          const res = await axios.get(`http://localhost:5000/api/inbox/search?username=${searchTerm}`, { withCredentials: true });
+          //console.log(res.data);
+          setSearchResults(res.data);
+      } catch (error) {
+          console.error("Error searching users:", error);
+      }
+    };
+
+    const handleInvite = async (userId) => {
+      try {
+          await axios.post(`http://localhost:5000/api/groups/${selectedGroup.id}/invite`, { receiverId: userId }, { withCredentials: true });
+          toast.success("Invitation sent!");
+      } catch (error) {
+          toast.error("Failed to send invitation");
+      }
+    };
+
+    const fetchInvitations = async () => {
+      try {
+          const res = await axios.get("http://localhost:5000/api/groups/invitations", { withCredentials: true });
+          setInvitations(res.data);
+      } catch (error) {
+          toast.error("Failed to load invitations");
+      }
+  };
+  
+  const handleAcceptInvite = async (inviteId) => {
+      try {
+          await axios.post(`http://localhost:5000/api/groups/invitations/${inviteId}/accept`, {}, { withCredentials: true });
+          toast.success("Joined the group!");
+          fetchInvitations();
+      } catch (error) {
+          toast.error("Failed to accept invitation");
+      }
+  };
+  
+  useEffect(() => {
+      fetchInvitations();
+  }, []);
+
     useEffect(() => {
       if (selectedGroup) fetchGroupMembers(selectedGroup.id);
     }, [selectedGroup]);
@@ -220,6 +266,51 @@ export default function Groups() {
           </div>
         </div>
       )}
+
+      {selectedGroup && (
+        <div className="mb-6">
+        <h2 className="text-xl font-semibold">Invite Users</h2>
+        <input
+            type="text"
+            placeholder="Search user by username"
+            className="input input-bordered w-full mt-2"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button onClick={handleSearch} className="btn btn-primary mt-2">Search</button>
+    
+        {searchResults.length > 0 && (
+            <ul className="mt-3 space-y-2">
+                {searchResults.map(user => (
+                    <li key={user.id} className="flex justify-between items-center p-2 bg-gray-100 rounded-md">
+                        <div className="flex items-center gap-2">
+                            <img src={user.photo} alt={user.username} className="w-8 h-8 rounded-full" />
+                            <p>{user.username}</p>
+                        </div>
+                        <button onClick={() => handleInvite(user.id)} className="btn btn-success">Invite</button>
+                    </li>
+                ))}
+            </ul>
+        )}
+    </div>
+    
+      )}
+
+<div className="mt-6">
+    <h2 className="text-xl font-semibold">Pending Group Invitations</h2>
+    {invitations.length > 0 ? (
+        <ul className="space-y-2">
+            {invitations.map(invite => (
+                <li key={invite.id} className="flex justify-between items-center p-2 bg-gray-100 rounded-md">
+                    <p>Invited to <strong>{invite.group_name}</strong> by {invite.sender_name}</p>
+                    <button onClick={() => handleAcceptInvite(invite.id)} className="btn btn-success">Accept</button>
+                </li>
+            ))}
+        </ul>
+    ) : (
+        <p className="text-gray-500">No pending invitations</p>
+    )}
+</div>
 
       {selectedGroup && (
         <div className="mt-6">

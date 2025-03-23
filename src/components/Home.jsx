@@ -96,7 +96,7 @@ export default function Home() {
                     <div key={post.id} className="border p-4 rounded-md shadow-md mb-4">
                         <p className="text-sm text-gray-500">By {post.username} | {new Date(post.created_at).toLocaleString()}</p>
                         <p className="text-gray-800">{post.content}</p>
-                        {post.image && <img src={`http://localhost:5000${post.image}`} alt="Post" className="w-full object-cover rounded-md mt-2" />}
+                        {post.image && <img src={post.image} alt="Post" className="w-full object-cover rounded-md mt-2" />}
                         <div className="flex justify-between mt-3">
                             {!userLiked[post.id] ? (
                                 <button onClick={() => handleLike(post.id)} className="text-blue-500">👍 Like {likes[post.id] || 0}</button>
