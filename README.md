@@ -1,12 +1,32 @@
-# React + Vite
+# **Facebook Clone** 🏡💬  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack **Facebook-like social media application** built using **React, Express, PostgreSQL, and Socket.io**.  
+Users can **create posts, like, comment, send friend requests, chat in real-time, join groups, and more!**  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 **Features**
+✅ **User Authentication** - Login & Register with HTTP-only cookies.  
+✅ **Posts & Likes** - Create posts, like/unlike, and comment.  
+✅ **Real-time Chat** - One-to-one messaging using **Socket.io**.  
+✅ **Friend Requests** - Send, accept, and manage friendships.  
+✅ **Groups & Roles** - Create groups, manage roles, and post in groups.  
+✅ **Notifications** - Stay updated with friend requests & messages.  
+✅ **Profile Editing** - Update your profile with an intuitive UI.  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ **Tech Stack**
+### **Frontend:**
+- **React.js** - UI & state management  
+- **React Router DOM** - Client-side routing  
+- **Tailwind CSS + Daisy UI** - Modern styling  
+- **Axios** - API communication  
+- **React Toastify** - Notifications  
+
+### **Backend:**
+- **Node.js & Express.js** - Server & API  
+- **PostgreSQL** - Relational database  
+- **Socket.io** - Real-time messaging  
+- **Bcrypt.js & JWT** - Secure authentication  
+- **Multer** - Image uploads

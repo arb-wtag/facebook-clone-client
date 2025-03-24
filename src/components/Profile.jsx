@@ -19,6 +19,7 @@ export default function Profile() {
     const [userLiked, setUserLiked] = useState({});
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -50,6 +51,7 @@ export default function Profile() {
             });
             toast.success("Profile updated");
             fetchProfile();
+            setIsModalOpen(false);
         } catch (error) {
             toast.error("Failed to update profile");
         }
@@ -58,8 +60,10 @@ export default function Profile() {
     const fetchUserPosts = async () => {
         try {
             const res = await axios.get(`http://localhost:5000/api/posts/user/${userId}`, { withCredentials: true });
-            setUserPosts(res.data);
-            console.log(res.data);
+            const personalPosts = res.data.filter(post => !post.group_id);
+            //console.log(personalPosts);
+            setUserPosts(personalPosts);
+            //console.log(res.data);
         } catch (error) {
             toast.error("Failed to load posts");
         }
@@ -189,6 +193,17 @@ export default function Profile() {
         }
     };
 
+    const handleDeleteComment = async (commentId, postId) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/comments/${commentId}`, { withCredentials: true });
+            toast.success("Comment deleted!");
+            fetchComments(postId);
+        } catch (error) {
+            toast.error("Failed to delete comment");
+        }
+    };
+    
+
     useEffect(() => {
         userPosts.forEach((post) => {
             fetchLikes(post.id);
@@ -205,21 +220,24 @@ export default function Profile() {
     }, [userId]);  
   return (
     <div className="bg-white shadow-md rounded-lg p-4 w-full">
-            <h2 className="text-xl font-semibold mb-4">Profile</h2>
+            <h2 className="text-3xl font-semibold mb-4 text-center">Profile</h2>
 
             {loading ? (
                 <p className="text-gray-500">Loading profile...</p>
             ) : (
                 <div className="space-y-4">
-                    {console.log(profile)}
+                    {/* {console.log(profile)} */}
                     <img src={profile.photo} alt="Profile" className="w-24 h-24 rounded-full mx-auto" />
-                    <div>
-                        <p>Username: {username}</p>
-                        <p>Email: {profile.email}</p>
+                    <div className="flex flex-col items-center">
                         <p>Bio: {bio}</p>
+                        <p className="font-bold text-2xl">Username: {username}</p>
+                        <p>Email: {profile.email}</p>
+                        <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">
+                            Edit Profile
+                        </button>
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    {/* <div className="flex flex-col gap-2">
                         <label className="font-medium">Username:</label>
                         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="border p-2 rounded-md w-full" />
                     </div>
@@ -241,93 +259,157 @@ export default function Profile() {
 
                     <button onClick={handleUpdateProfile} className="bg-blue-500 text-white px-4 py-2 rounded-md w-full">
                         Save Changes
-                    </button>
+                    </button> */}
                 </div>
             )}
 
-            <h2 className="text-xl font-semibold mt-6">Create Post</h2>
-            <form onSubmit={handleCreatePost} className="space-y-4 mt-4 border p-4 rounded-md shadow-md">
-                <textarea
-                    value={newPostContent}
-                    onChange={(e) => setNewPostContent(e.target.value)}
-                    className="border p-2 rounded-md w-full"
-                    placeholder="Write something..."
-                ></textarea>
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setNewPostImage(e.target.files[0])}
-                    className="border p-2 rounded-md w-full"
-                />
-                <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-md w-full">
-                    Post
-                </button>
-            </form>
+{isModalOpen && (
+                <div className="modal modal-open">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">Edit Profile</h3>
+                        <div className="mt-4 space-y-3">
+                            <label className="block font-medium">Username:</label>
+                            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="input input-bordered w-full" />
 
-            <h2 className="text-xl font-semibold mt-6">Your Posts</h2>
-            <div className="space-y-4 mt-4">
-                {userPosts.length === 0 ? (
-                    <p className="text-gray-500">No posts yet</p>
-                ) : (
-                    userPosts.map((post) => (
-                        <div key={post.id} className="border p-4 rounded-md shadow-md">
-                            {
-                                post.group_id && (
-                                    <div>
-                                        <p className="font-bold">Group Post</p>
-                                        <p>Group Name: {post.group_name}</p>
-                                    </div>
-                                )
-                            }
-                            <p className="text-gray-800">{post.content}</p>
-                            {post.image && (
-                                <img src={`${post.image}`} alt="Post" className="w-full object-cover rounded-md mt-2" />
-                            )}
-                            <div className="flex justify-between mt-3">
-                                {/* <button onClick={()=>handleLike(post.id)} className="text-blue-500">👍 {likes[post.id] || 0} Likes</button> */}
-                                {!userLiked[post.id] ? (
-                                     <button 
-                                        onClick={() => handleLike(post.id)} 
-                                        className="text-blue-500">
-                                            👍 Like {likes[post.id] || 0}
-                                    </button>
-                                ) : (
-                                    <button 
-                                        onClick={() => handleUnlike(post.id)} 
-                                        className="text-red-500">
-                                            👎 Unlike {likes[post.id] || 0}
-                                        </button>
-                                )}
-                                <button onClick={() => handleDeletePost(post.id)} className="bg-red-500 text-white px-3 py-1 rounded-md mt-2">
-                                    Delete
-                                </button>
-                            </div>
-                            <div className="mt-3">
-                                <input 
-                                    type="text" 
-                                    placeholder="Write a comment..." 
-                                    value={newComment[post.id] || ""} 
-                                    onChange={(e) => handleCommentChange(post.id, e.target.value)} 
-                                    className="border rounded p-2 w-full"
-                                />
-                                <button onClick={()=>handleComment(post.id)} className="bg-blue-500 text-white px-3 py-1 mt-2 rounded">Comment</button>
-                            </div>
-                            <ul className="space-y-2">
-              {comments[post.id]?.length > 0 ? (
-                comments[post.id].map((comment) => (
-                  <li key={comment.id} className="p-2 bg-white border rounded">
-                    <span className="font-semibold">{comment.username}: </span>
-                    {comment.content}
-                  </li>
-                ))
-              ) : (
-                <p className="text-gray-500">No comments yet.</p>
-              )}
-            </ul>
+                            <label className="block font-medium">Bio:</label>
+                            <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="textarea textarea-bordered w-full"></textarea>
+
+                            <label className="block font-medium">Change Profile Picture:</label>
+                            <input type="file" accept="image/*" onChange={handleFileChange} className="file-input file-input-bordered w-full" />
                         </div>
-                    ))
-                )}
+
+                        <div className="modal-action">
+                            <button onClick={handleUpdateProfile} className="btn btn-success">Save Changes</button>
+                            <button onClick={() => setIsModalOpen(false)} className="btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+<h2 className="text-3xl font-bold mt-6 text-center text-primary">Create Post</h2>
+<form onSubmit={handleCreatePost} className="card bg-base-100 shadow-xl p-6 mt-4">
+    <div className="form-control">
+        <textarea
+            value={newPostContent}
+            onChange={(e) => setNewPostContent(e.target.value)}
+            className="textarea textarea-bordered h-24 w-full"
+            placeholder="What's on your mind?"
+        ></textarea>
+    </div>
+    <div className="form-control mt-3">
+        <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setNewPostImage(e.target.files[0])}
+            className="file-input file-input-bordered w-full"
+        />
+    </div>
+    <div className="mt-4">
+        <button type="submit" className="btn btn-primary w-full">
+            Post
+        </button>
+    </div>
+</form>
+
+<h2 className="text-2xl font-bold mt-6 text-primary">Your Posts</h2>
+<div className="space-y-4 mt-4">
+    {userPosts.length === 0 ? (
+        <p className="text-gray-500 text-center">No posts yet</p>
+    ) : (
+        userPosts.map((post) => (
+            <div key={post.id} className="card bg-base-100 shadow-xl p-6">
+                <div className="card-body">
+                    <p className="text-sm text-gray-500">
+                        By <span className="font-semibold">{post.username}</span> | {new Date(post.created_at).toLocaleString()}
+                    </p>
+
+                    {/*post.group_id && (
+                        <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-md">
+                            <p className="font-bold">Group Post</p>
+                            <p>Group Name: {post.group_name}</p>
+                        </div>
+                    )*/}
+
+                    <p className="text-gray-800">{post.content}</p>
+
+                    {post.image && (
+                        <figure>
+                            <img
+                                src={`${post.image}`}
+                                alt="Post"
+                                className="mx-auto max-w-full max-h-[500px] object-contain rounded-md mt-2"
+                            />
+                        </figure>
+                    )}
+
+                    <div className="card-actions justify-between mt-3">
+                        {!userLiked[post.id] ? (
+                            <button
+                                onClick={() => handleLike(post.id)}
+                                className="btn btn-outline btn-primary"
+                            >
+                                👍 Like {likes[post.id] || 0}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => handleUnlike(post.id)}
+                                className="btn btn-outline btn-error"
+                            >
+                                👎 Unlike {likes[post.id] || 0}
+                            </button>
+                        )}
+                        <button
+                            onClick={() => handleDeletePost(post.id)}
+                            className="btn btn-error"
+                        >
+                            Delete
+                        </button>
+                    </div>
+
+                    <div className="mt-3">
+                        <input
+                            type="text"
+                            placeholder="Write a comment..."
+                            value={newComment[post.id] || ""}
+                            onChange={(e) => handleCommentChange(post.id, e.target.value)}
+                            className="input input-bordered w-full"
+                        />
+                        <button
+                            onClick={() => handleComment(post.id)}
+                            className="btn btn-primary mt-2 w-full"
+                        >
+                            Comment
+                        </button>
+                    </div>
+
+                    <ul className="space-y-2 mt-3">
+                        {comments[post.id]?.length > 0 ? (
+                            comments[post.id].map((comment) => (
+                                <li key={comment.id} className="p-2 bg-base-200 border rounded flex justify-between items-center">
+                                    <span>
+                                        <span className="font-semibold">{comment.username}: </span>
+                                        {comment.content}
+                                    </span>
+                                    {comment.user_id === userId && (
+                                        <button
+                                            onClick={() => handleDeleteComment(comment.id, post.id)}
+                                            className="btn btn-sm btn-error"
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
+                                </li>
+                            ))
+                        ) : (
+                            <p className="text-gray-500">No comments yet.</p>
+                        )}
+                    </ul>
+                </div>
             </div>
+        ))
+    )}
+</div>
+
     </div>
   )
 }

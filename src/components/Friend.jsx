@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 const Friend = () => {
   const [friends, setFriends] = useState([]);
@@ -38,10 +39,11 @@ const Friend = () => {
     try {
       await axios.post(`http://localhost:5000/api/friends/request/${friendId}`, {}, {withCredentials:true});
       fetchPendingRequests();
+      toast.success('Friend Request Sent');
     } 
     catch (error) 
     {
-      console.error("Error sending friend request:", error);
+      toast.error("Error sending friend request");
     }
   };
 
