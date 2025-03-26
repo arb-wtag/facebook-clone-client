@@ -4,14 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 export default function Header() {
-    const { user,logout }=useContext(AuthContext);
-    const navigate=useNavigate();
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const handleLogout=async ()=>{
-        await logout();
-        toast.success('Logged out successfully');
-        navigate('/login');
-    }
+  const handleLogout = async () => {
+    await logout();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  }
   return (
     <nav className="navbar bg-base-200 shadow-md px-6">
       <div className="container mx-auto flex justify-between items-center w-full">

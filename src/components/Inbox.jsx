@@ -140,18 +140,17 @@ export default function Inbox() {
                     <>
                         <div className="border p-4 h-96 overflow-y-auto">
                             {/* {console.log(messages)} */}
-                            {messages.map((msg) =>{
+                            {messages.map((msg) => {
                                 let sender = conversations.find(c => c.id === msg.sender_id);
                                 console.log(sender);
-                                if(!sender)
-                                {
-                                    sender=user;
+                                if (!sender) {
+                                    sender = user;
                                 }
-                            return (
-                                <div key={msg.id} className={`p-2 my-1 rounded ${msg.sender_id === user.id ? "bg-blue-200" : "bg-gray-200"}`}>
-                                    <strong className={`${msg.sender_id === user.id ? "text-red-500" : "text-blue-500"}`}>{sender?.username} : </strong>{msg.content}
-                                </div>
-                            );
+                                return (
+                                    <div key={msg.id} className={`p-2 my-1 rounded ${msg.sender_id === user.id ? "bg-blue-200" : "bg-gray-200"}`}>
+                                        <strong className={`${msg.sender_id === user.id ? "text-red-500" : "text-blue-500"}`}>{sender?.username} : </strong>{msg.content}
+                                    </div>
+                                );
                             })}
                         </div>
                         <div className="mt-2 flex">

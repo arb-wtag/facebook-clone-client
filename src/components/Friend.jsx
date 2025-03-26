@@ -10,15 +10,15 @@ const Friend = () => {
 
   useEffect(() => {
     async function fetchData() {
-        await fetchFriends();
-        await fetchPendingRequests();   
+      await fetchFriends();
+      await fetchPendingRequests();
     }
     fetchData();
   }, []);
 
   const fetchFriends = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/friends/my-friends", {withCredentials:true});
+      const res = await axios.get("http://localhost:5000/api/friends/my-friends", { withCredentials: true });
       setFriends(res.data);
     } catch (error) {
       console.error("Error fetching friends:", error);
@@ -27,7 +27,7 @@ const Friend = () => {
 
   const fetchPendingRequests = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/friends/pending", {withCredentials:true});
+      const res = await axios.get("http://localhost:5000/api/friends/pending", { withCredentials: true });
       setPendingRequests(res.data);
       console.log(pendingRequests);
     } catch (error) {
@@ -37,12 +37,11 @@ const Friend = () => {
 
   const sendFriendRequest = async (friendId) => {
     try {
-      await axios.post(`http://localhost:5000/api/friends/request/${friendId}`, {}, {withCredentials:true});
+      await axios.post(`http://localhost:5000/api/friends/request/${friendId}`, {}, { withCredentials: true });
       fetchPendingRequests();
       toast.success('Friend Request Sent');
-    } 
-    catch (error) 
-    {
+    }
+    catch (error) {
       toast.error("Error sending friend request");
     }
   };
@@ -50,13 +49,13 @@ const Friend = () => {
   const acceptFriendRequest = async (friendId) => {
     try {
       await axios.put(`http://localhost:5000/api/friends/accept/${friendId}`, {}, {
-        withCredentials:true
+        withCredentials: true
       });
       setPendingRequests((prev) => prev.filter((req) => req.id !== friendId));
       const acceptedFriend = pendingRequests.find((req) => req.id === friendId);
       if (acceptedFriend) {
-          setFriends((prev) => [...prev, acceptedFriend]);
-        }
+        setFriends((prev) => [...prev, acceptedFriend]);
+      }
       await fetchFriends();
       await fetchPendingRequests();
     } catch (error) {
@@ -66,7 +65,7 @@ const Friend = () => {
 
   const declineFriendRequest = async (friendId) => {
     try {
-      await axios.put(`http://localhost:5000/api/friends/decline/${friendId}`, {}, {withCredentials:true});
+      await axios.put(`http://localhost:5000/api/friends/decline/${friendId}`, {}, { withCredentials: true });
       setPendingRequests((prev) => prev.filter((req) => req.id !== friendId));
       await fetchPendingRequests();
     } catch (error) {
@@ -76,7 +75,7 @@ const Friend = () => {
 
   const removeFriend = async (friendId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/friends/remove/${friendId}`, {withCredentials:true});
+      await axios.delete(`http://localhost:5000/api/friends/remove/${friendId}`, { withCredentials: true });
       await fetchFriends();
     } catch (error) {
       console.error("Error removing friend:", error);
@@ -86,17 +85,17 @@ const Friend = () => {
   const handleSearch = async () => {
     if (!searchQuery) return;
     try {
-        const res = await axios.get(`http://localhost:5000/api/inbox/search?username=${searchQuery}`, { withCredentials: true });
-        //console.log(res.data);
-        setSearchResults(res.data);
+      const res = await axios.get(`http://localhost:5000/api/inbox/search?username=${searchQuery}`, { withCredentials: true });
+      //console.log(res.data);
+      setSearchResults(res.data);
     } catch (error) {
-        console.error("Error searching users:", error);
+      console.error("Error searching users:", error);
     }
-};
+  };
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-        <div className="mb-4">
+      <div className="mb-4">
         <input
           type="text"
           placeholder="Search for users..."
