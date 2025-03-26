@@ -14,12 +14,13 @@ export default function Login() {
       const email=event.target.email.value;
       const password=event.target.password.value;
       //const response=await axios.post('http://localhost:5000/api/auth/login',{email,password},{withCredentials:true});
-      login({email,password});
+      await login({email,password});
       toast.success('Login successful!');
       navigate(location?.state ? location.state : "/");
     }
     catch(error){
-      toast.error(error.response?.data?.message || 'Login failed');
+      console.log(error);
+      toast.error(error.message || 'Login failed');
     }
   };
   return (

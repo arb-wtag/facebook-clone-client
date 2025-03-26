@@ -111,9 +111,19 @@ export default function Home() {
                                 <span className="font-semibold">{post.username}</span> • {new Date(post.created_at).toLocaleString()}
                             </p>
                             <p className="text-gray-800">{post.content}</p>
-                            {post.image && (
-                                <img src={post.image} alt="Post" className="w-full max-h-[400px] object-cover rounded-md mt-2" />
-                            )}
+                            {post.image && post.image.length > 0 && (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+        {post.image.map((single, index) => (
+            <figure key={index} className="relative overflow-hidden rounded-md shadow-md">
+                <img
+                    src={single}
+                    alt={`Post image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                />
+            </figure>
+        ))}
+    </div>
+)}
 
                             {/* Like & Comment Buttons */}
                             <div className="flex justify-between mt-3">

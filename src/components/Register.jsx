@@ -16,7 +16,10 @@ export default function Register() {
           navigate('/login');
         }
         catch(error){
-          toast.error(error.response?.data?.message || 'Registration failed');
+          //console.log(error);
+          const errorMessage =error.response?.data?.errors?.[0]?.msg || error.response?.data?.message ||
+          error.response?.data?.error || "Registration failed";
+          toast.error(errorMessage);
         }
     };  
   return (

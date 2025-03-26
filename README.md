@@ -22,7 +22,7 @@ Users can **create posts, like, comment, send friend requests, chat in real-time
 - **React Router DOM** - Client-side routing  
 - **Tailwind CSS + Daisy UI** - Modern styling  
 - **Axios** - API communication  
-- **React Toastify** - Notifications  
+- **React Toastify** - Toasts  
 
 ### **Backend:**
 - **Node.js & Express.js** - Server & API  

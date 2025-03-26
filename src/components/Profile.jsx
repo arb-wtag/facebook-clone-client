@@ -14,7 +14,7 @@ export default function Profile() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [userPosts, setUserPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
-    const [newPostImage, setNewPostImage] = useState(null);
+    const [newPostImages, setNewPostImages] = useState([]);
     const [likes, setLikes] = useState({});
     const [userLiked, setUserLiked] = useState({});
     const [comments, setComments] = useState({});
@@ -82,11 +82,15 @@ export default function Profile() {
     const handleCreatePost = async (event) => {
         event.preventDefault();
         if (!newPostContent) return toast.error("Post content cannot be empty");
+        if(newPostContent.length>500) return toast.error("Post content cannot exceed 500 characters");
+        if (newPostImages.length > 5) return toast.error("You can upload up to 5 images only");
 
         const formData = new FormData();
         formData.append("content", newPostContent);
-        if (newPostImage) {
-            formData.append("image", newPostImage);
+        if (newPostImages.length) {
+            Array.from(newPostImages).forEach((image) => {
+                formData.append("images", image); 
+            });
         }
 
         try {
@@ -96,7 +100,7 @@ export default function Profile() {
             });
             toast.success("Post created!");
             setNewPostContent("");
-            setNewPostImage(null);
+            setNewPostImages([]);
             fetchUserPosts();
         } catch (error) {
             toast.error("Failed to create post");
@@ -291,16 +295,25 @@ export default function Profile() {
     <div className="form-control">
         <textarea
             value={newPostContent}
-            onChange={(e) => setNewPostContent(e.target.value)}
+            onChange={(e) => {
+                if (e.target.value.length <= 500) {
+                    setNewPostContent(e.target.value);
+                }
+            }}
+            maxLength={500}
             className="textarea textarea-bordered h-24 w-full"
             placeholder="What's on your mind?"
         ></textarea>
+        <p className="text-right text-sm text-gray-500 mt-2">
+            {500 - newPostContent.length} characters remaining
+        </p>
     </div>
     <div className="form-control mt-3">
         <input
             type="file"
             accept="image/*"
-            onChange={(e) => setNewPostImage(e.target.files[0])}
+            multiple
+            onChange={(e) => setNewPostImages(e.target.files)}
             className="file-input file-input-bordered w-full"
         />
     </div>
@@ -332,15 +345,19 @@ export default function Profile() {
 
                     <p className="text-gray-800">{post.content}</p>
 
-                    {post.image && (
-                        <figure>
-                            <img
-                                src={`${post.image}`}
-                                alt="Post"
-                                className="mx-auto max-w-full max-h-[500px] object-contain rounded-md mt-2"
-                            />
-                        </figure>
-                    )}
+                    {post.image && post.image.length > 0 && (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+        {post.image.map((single, index) => (
+            <figure key={index} className="relative overflow-hidden rounded-md shadow-md">
+                <img
+                    src={single}
+                    alt={`Post image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                />
+            </figure>
+        ))}
+    </div>
+)}
 
                     <div className="card-actions justify-between mt-3">
                         {!userLiked[post.id] ? (

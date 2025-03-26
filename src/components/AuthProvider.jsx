@@ -27,7 +27,10 @@ export default function AuthProvider({ children }) {
         }
         catch(error)
         {
-            throw new Error(error.response?.data?.message || "Login failed");
+            console.log(error);
+            const errorMessage =error.response?.data?.errors?.[0]?.msg || error.response?.data?.message ||
+        error.message || "Login failed";
+            throw new Error(errorMessage);
         }
     }
 
