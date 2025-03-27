@@ -42,7 +42,8 @@ const Friend = () => {
       toast.success('Friend Request Sent');
     }
     catch (error) {
-      toast.error("Error sending friend request");
+      //console.log(error);
+      toast.error(error.response.data.message || "Error sending friend request");
     }
   };
 
@@ -58,8 +59,9 @@ const Friend = () => {
       }
       await fetchFriends();
       await fetchPendingRequests();
+      toast.success("Request accepted");
     } catch (error) {
-      console.error("Error accepting friend request:", error);
+      toast.error("Error accepting friend request");
     }
   };
 
@@ -68,8 +70,9 @@ const Friend = () => {
       await axios.put(`http://localhost:5000/api/friends/decline/${friendId}`, {}, { withCredentials: true });
       setPendingRequests((prev) => prev.filter((req) => req.id !== friendId));
       await fetchPendingRequests();
+      toast.success("Friend request declined");
     } catch (error) {
-      console.error("Error declining friend request:", error);
+      toast.error("Error declining friend request");
     }
   };
 
@@ -77,8 +80,9 @@ const Friend = () => {
     try {
       await axios.delete(`http://localhost:5000/api/friends/remove/${friendId}`, { withCredentials: true });
       await fetchFriends();
+      toast.success("Friend removed");
     } catch (error) {
-      console.error("Error removing friend:", error);
+      toast.error("Error removing friend");
     }
   };
 
